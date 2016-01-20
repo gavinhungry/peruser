@@ -3,6 +3,7 @@
 
   var bodyParser = require('body-parser');
   var express = require('express');
+  var fs = require('fs');
   var http = require('http');
   var https = require('https');
   var Users = require('./lib/users');
