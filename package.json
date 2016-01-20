@@ -1,0 +1,30 @@
+{
+  "name": "peruser",
+  "version": "0.0.0",
+  "author": "Gavin Lloyd <gavinhungry@gmail.com>",
+  "description": "User authentication for quick REST APIs",
+  "license": "MIT",
+  "private": true,
+
+  "keywords": [
+    "rest",
+    "api",
+    "auth",
+    "users"
+  ],
+
+  "homepage": "https://github.com/gavinhungry/peruser",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/gavinhungry/peruser.git"
+  },
+
+  "main": "peruser.js",
+
+  "dependencies": {
+    "body-parser": "1.14.x",
+    "express": "4.13.x",
+    "js-schema": "1.0.x",
+    "rudiment": "0.5.x"
+  }
+}
