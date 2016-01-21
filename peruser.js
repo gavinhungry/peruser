@@ -67,12 +67,14 @@
     },
 
     userHasUidOrIsAdmin: function(req, res, next) {
+      var that = this;
+
       this.userIsEnabled(req, res, function() {
         if (req.params.uid === req.query.key) {
           return next();
         }
 
-        this.userIsAdmin(req, res, next);
+        that.userIsAdmin(req, res, next);
       });
     },
 
