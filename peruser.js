@@ -11,7 +11,7 @@
   var Peruser = function(db, config) {
     var that = this;
     this.users = new Users(db);
-    this.config = config;
+    this.config = config || {};
 
     this.api = express();
     this.api.use(bodyParser.json());
@@ -43,6 +43,12 @@
     this.api.delete('/user/:uid', this.userIsAdmin.bind(this), function(req, res) {
       that.users.crud.delete(req.params.uid, that.users.crud.rest(res));
     });
+
+    if (!this.config.noBind) {
+      Object.keys(Peruser.prototype).forEach(function(method) {
+        that[method] = Peruser.prototype[method].bind(that);
+      });
+    }
   };
 
   Peruser.prototype = {
