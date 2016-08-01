@@ -8,6 +8,8 @@
   var https = require('https');
   var Users = require('./lib/users');
 
+  var apiHeaderField = 'X-API-Key';
+
   var Peruser = function(db, config) {
     var that = this;
     this.users = new Users(db);
@@ -36,7 +38,7 @@
       that.users.crud.readAll(that.users.crud.rest(res));
     });
 
-    this.api.put('/user/:uid', this.userHasUidOrIsAdmin.bind(this), function(req, res) {
+    this.api.put('/user/:uid', this.userIsAdmin.bind(this), function(req, res) {
       that.users.crud.update(req.params.uid, req.body, that.users.crud.rest(res));
     });
 
@@ -53,7 +55,7 @@
 
   Peruser.prototype = {
     userIsEnabled: function(req, res, next) {
-      this.users.isEnabled(req.query.key, function(err, enabled) {
+      this.users.isEnabled(req.params.uid, req.get(apiHeaderField), function(err, enabled) {
         if (!enabled) {
           return res.status(403).end();
         }
@@ -63,7 +65,7 @@
     },
 
     userIsAdmin: function(req, res, next) {
-      this.users.isAdmin(req.query.key, function(err, admin) {
+      this.users.isAdmin(req.params.uid, req.get(apiHeaderField), function(err, admin) {
         if (!admin) {
           return res.status(403).end();
         }
@@ -76,7 +78,11 @@
       var that = this;
 
       this.userIsEnabled(req, res, function() {
-        if (req.params.uid === req.query.key) {
+
+        
+
+        
+        if (req.params.uid === req.get(apiHeaderField)) {
           return next();
         }
 
