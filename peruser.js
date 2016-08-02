@@ -8,7 +8,9 @@
   var https = require('https');
   var Users = require('./lib/users');
 
-  var Peruser = function(db, config) {
+  var apiHeaderField = 'X-API-Key';
+
+  var Peruser = function(db, config, service) {
     var that = this;
     this.users = new Users(db);
     this.config = config || {};
@@ -19,7 +21,7 @@
     this.api.use(function(req, res, next) {
       res.setHeader('Access-Control-Allow-Origin', '*');
       res.setHeader('Access-Control-Allow-Methods', 'POST, GET, PUT, DELETE');
-      res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+      res.setHeader('Access-Control-Allow-Headers', 'Content-Type, ' + apiHeaderField);
 
       next();
     });
@@ -36,13 +38,19 @@
       that.users.crud.readAll(that.users.crud.rest(res));
     });
 
-    this.api.put('/user/:uid', this.userHasUidOrIsAdmin.bind(this), function(req, res) {
+    this.api.put('/user/:uid', this.userIsAdmin.bind(this), function(req, res) {
       that.users.crud.update(req.params.uid, req.body, that.users.crud.rest(res));
     });
 
     this.api.delete('/user/:uid', this.userIsAdmin.bind(this), function(req, res) {
       that.users.crud.delete(req.params.uid, that.users.crud.rest(res));
     });
+
+    if (service) {
+      this.api.get('/service', this.userIsEnabled.bind(this), function(req, res) {
+        res.json(service);
+      });
+    }
 
     if (!this.config.noBind) {
       Object.keys(Peruser.prototype).forEach(function(method) {
@@ -53,7 +61,7 @@
 
   Peruser.prototype = {
     userIsEnabled: function(req, res, next) {
-      this.users.isEnabled(req.query.key, function(err, enabled) {
+      this.users.isEnabled(req.get(apiHeaderField), function(err, enabled) {
         if (!enabled) {
           return res.status(403).end();
         }
@@ -63,7 +71,7 @@
     },
 
     userIsAdmin: function(req, res, next) {
-      this.users.isAdmin(req.query.key, function(err, admin) {
+      this.users.isAdmin(req.get(apiHeaderField), function(err, admin) {
         if (!admin) {
           return res.status(403).end();
         }
@@ -73,14 +81,12 @@
     },
 
     userHasUidOrIsAdmin: function(req, res, next) {
-      var that = this;
-
-      this.userIsEnabled(req, res, function() {
-        if (req.params.uid === req.query.key) {
-          return next();
+      this.users.hasUidOrIsAdmin(req.params.uid, req.get(apiHeaderField), function(err, ok) {
+        if (!ok) {
+          return res.status(403).end();
         }
 
-        that.userIsAdmin(req, res, next);
+        next();
       });
     },
 
