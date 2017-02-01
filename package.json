@@ -2,7 +2,7 @@
   "name": "peruser",
   "version": "2.0.0",
   "author": "Gavin Lloyd <gavinhungry@gmail.com>",
-  "description": "User authentication for quick REST APIs",
+  "description": "User authentication for REST APIs",
   "license": "MIT",
 
   "keywords": [
@@ -21,9 +21,9 @@
   "main": "peruser.js",
 
   "dependencies": {
-    "body-parser": "1.15.x",
+    "body-parser": "1.16.x",
     "express": "4.14.x",
     "js-schema": "1.0.x",
-    "rudiment": "1.0.x"
+    "rudiment": "2.0.x"
   }
 }
