@@ -24,6 +24,6 @@
     "body-parser": "1.16.x",
     "express": "4.14.x",
     "js-schema": "1.0.x",
-    "rudiment": "2.0.x"
+    "rudiment": "2.1.x"
   }
 }
